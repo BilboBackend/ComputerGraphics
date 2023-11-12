@@ -12,34 +12,22 @@ window.onload = function init() {
   var program = initShaders(gl, "vertex-shader", "fragment-shader");
   gl.useProgram(program);
 
-// creating 3 cubes.
-  cube1 = drawCube(vec3(-0.3,-0.3,0),0.7,0.7,0.7,"wires");
+// creating rectangle.
+  cube1 = drawCube(vec3(-4,-1,-1),8,0,-20,"indices");
   vertices1 = cube1[0];
   indices1 = cube1[1];
 
-  cube2 = drawCube(vec3(0,1,0),0.5,0.5,0.5,"wires");
-  vertices2 = cube2[0];
-  indices2 = cube2[1];
-  
-  cube3 = drawCube(vec3(1.,0.,0.),0.3,0.3,0.3,"wires");
-  vertices3 = cube3[0];
-  indices3 = cube3[1];
-
-
-  // we want to have each cube in a different view
-  // so we will make a few differnt transformation matrices:
-  
-
-  // we make a new projection matrix s.t. the camera is a 
-  // pinhole camera with fov = 45 degrees
-  // we can use the perspective function 
-  // and we keep an aspect ratio of 1 for our quadratic canvas.
   var projection = gl.getUniformLocation(program,"projection");
   var view = gl.getUniformLocation(program,"view");
   var model = gl.getUniformLocation(program,"model");
+  
+  // creating 90 FOV perspective camera:
+  var eye = vec3(0,2,1)
+  var lookat = vec3(0,-3,-2)  
+  var up = vec3(0,1,0)
 
-  var P = perspective(45,1,0.5,5);
-  var V = lookAt(vec3(2.5,2.5,2.5),vec3(0.5,0.5,0.5),vec3(0.0,1.0,0.0));
+  var P = perspective(90,1,0.5,5);
+  var V = lookAt(eye,lookat,up);
   
   gl.uniformMatrix4fv(projection,false,flatten(P));
   gl.uniformMatrix4fv(view,false,flatten(V));
@@ -47,23 +35,11 @@ window.onload = function init() {
   // to get a one point perspective we need a surface to face
   // the viewpoint. This is most easily achieved by rotating
   // 45 degrees around the y-axis.
-  var M1 = rotate(45,[0,1,0]);
+  var M1 = rotate(0,[0,1,0]);
   gl.uniformMatrix4fv(model,false,flatten(M1));
   render(gl,vertices1,indices1,program)
 
-  // two point perspective can be achieved by making sure only one
-  // of the lines are parallel to the other, that is not a 2d surface 
-  // but just a line is parallel to the y-axis. 
-    // We get this by rotating around the (1,0,1) vector which will
-  // bring the vertical lines in parallel with the y-axis
-  var M2 = rotate(45,[1,0,1]);
-  gl.uniformMatrix4fv(model,false,flatten(M2));
-  render(gl,vertices2,indices2,program)
-  
-  // 3 point perspective 
-  var M3 = rotate(45,vec3(1,1,0.5));
-  gl.uniformMatrix4fv(model,false,flatten(M3));
-  render(gl,vertices3,indices3,program)
+
 }
 
 // origin should be front bottom left corner
@@ -135,5 +111,5 @@ function render(gl,vertices,indices,program) {
     gl.enableVertexAttribArray(vPosition);
 
   
-  gl.drawElements(gl.LINES,indices.length,gl.UNSIGNED_INT,0);
+  gl.drawElements(gl.TRIANGLES,indices.length,gl.UNSIGNED_INT,0);
 }
