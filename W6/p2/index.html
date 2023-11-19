@@ -2,85 +2,72 @@
 <html><body>
 
   <script type="text/javascript" src="../common/webgl-utils.js"></script>
-  <script type="text/javascript" src="../common/utils.js"></script>
   <script type="text/javascript" src="../common/initShaders.js"></script>
 
  <script id="vertex-shader" type="x-shader/x-vertex">
   attribute vec4 a_Position;
-  attribute vec4 a_Normal;
   uniform mat4 projection;
-  uniform mat4 view;
-  
-  uniform vec4 ksColor;
-  uniform vec4 kdColor;
-  uniform vec4 kaColor;
-  
-  uniform float kd;
-  uniform float ks;
-  uniform float ka;
-  uniform float Li;
-  uniform float shininess;
+  uniform sampler2D texMap;
 
-  varying vec4 v_Color;
+  attribute vec2 TexCoords;
+  varying vec2 fTexCoords;
   void main() {
-    vec3 pos = (view*a_Position).xyz;
+    gl_Position = projection*a_Position;
 
-    vec3 L = normalize(a_Normal.xyz);
-    vec3 E = -normalize(pos);
-    vec3 H = normalize(L+E);
-    
-    vec4 Lrd = max(dot(L,E), 0.0)*(0.5*a_Normal+vec4(0.5,0.5,0.5,1.0));
-    vec4 Lra = ka*Li*kaColor;
-    vec4 Lrs = max(ks*Li*pow(max(dot(a_Normal.xyz,H),0.0),shininess)*ksColor,0.0);
-    v_Color = Lra + Lrd +Lrs;
-    v_Color.a = 1.0;
-
-    gl_Position = projection*view*a_Position;
+    fTexCoords = TexCoords;
   }
  </script>
 
  <script id="fragment-shader" type="x-shader/x-fragment">
   precision mediump float;
-  varying vec4 v_Color;
+  uniform sampler2D texMap;
+  varying vec2 fTexCoords;
   void main() {
-    gl_FragColor = v_Color;
+    gl_FragColor = texture2D(texMap, fTexCoords);
   }
 </script>
 
 <script type="text/javascript" src="../common/MV.js"></script>
-<script type="text/javascript" src="w5p2.js"></script>
+<script type="text/javascript" src="w6p2.js"></script>
 
 <p>
 <canvas id="canvas" width="512" height="512"></canvas>
 </p>
 
-<input type="button" id="animate" value="Toggle animation" ></input>
-
-<div class="slidecontainer">
-<label for="slider">Ka:</label>
-  <input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" id="ka">
+<div class="selector" style="width:200px;">
+  T-Wrap: 
+  <select id="twrapselect">
+    <option value="0">Repeat</option>
+    <option value="1">Clamp to edge</option>
+  </select>
 </div>
 
-<div class="slidecontainer">
-  <label for="slider">Kd:</label>
-  <input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" id="kd">
+<div  style="width:200px;">
+  S-Wrap:
+  <select id="swrapselect">
+    <option value="0">Repeat</option>
+    <option value="1">Clamp to edge</option>
+  </select>
 </div>
 
-<div class="slidecontainer">
-  <label for="slider">Ks:</label>
-  <input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" id="ks">
+<div class="selector" style="width:200px;">
+  Minification: 
+  <select id="miniselect" >
+    <option value="0">Nearest</option>
+    <option value="1">Linear</option>¨
+    <option value="2">Nearest Mipmap Nearest</option>
+    <option value="3">Linear Mipmap Nearest</option>
+    <option value="4">Nearest Mipmap Linear</option>
+    <option value="5">Linear Mipmap Linear</option>
+  </select>
 </div>
 
-<div class="slidecontainer">
-  <label for="slider">Shininess:</label>
-  <input type="range" min="0.0" max="20" value="5" step="0.1" class="slider" id="shininess">
+<div class="selector" style="width:200px;">
+  Magnification: 
+  <select id="magniselect">
+    <option value="0">Nearest</option>
+    <option value="1">Linear</option>¨
+  </select>
 </div>
-
-<div class="slidecontainer">
-  <label for="slider">Intensity:</label>
-  <input type="range" min="0.0" max="1.0" value="0.5" step="0.01" class="slider" id="lightintensity">
-</div>
-
-
-  </body>
+</body>
 </html>
