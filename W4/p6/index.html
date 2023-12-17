@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/styles.css"> <!-- Replace with the path to your CSS file -->
+</head>
+
+  <body>
+
+  <div class="box"> a) What is the difference between Phong shading and Phong lighting (the
+  Phong reflection model)? 
+<br>
+<br>
+  The Phong ligthing is the model for how the light is reflected given a surface, a light source and a viewer, whereas the shading is the application of lighting model to every pixel in the render.
+<br>
+<br>
+  b) What is the difference between flat shading, Gouraud shading, and Phong
+  shading? List pros and cons of each. Is Gouraud or Phong shading the
+  best method for simulating highlights? Explain. 
+<br>
+<br>
+Flat shading is the simplest, where each triangle gets it's own color. In the Gouraud shading each vertex has a normal and we calculate the color of a triangle by interpolating over these normals. In the Phong we do as in Gouraud but instead of interpolating over triangles we do it over the pixels. 
+<br>
+This means that the shaders are increasingly smooth looking in the order: Flat, Gouraud, Phong. 
+The downside is that the shaders are computationally more requiring in the same order, so Phong is most inefficient etc.
+<br>
+<br>
+  c) What is the difference between a directional light and a point light? 
+<br>
+<br>
+
+A point light is located at a specific position and emits light all around it sort of like a lightbulb. A directional light on the other hand is located infinetely far away but has one specific direction in which it shines, sort of like a flashlight.
+<br>
+<br>
+  d) Does the eye position influence the shading of an object in any way? 
+<br>
+<br>
+  Yes, since the angle between the light source and the viewer changes this will result in movement of the specular highlighting.
+<br>
+<br>
+  e) What is the effect of setting the specular term to (0, 0, 0)? 
+
+<br>
+<br>
+  This basically nullfies the specular term and as such the Phong and Gouraud shading becomes equivalent.
+<br>
+<br>
+  f) What is the effect of increasing the shininess exponent (𝛼𝛼)? 
+<br>
+<br>
+  The area of reflection becomes smaller while the intensity becomes larger.
+<br>
+<br>
+  g) In what coordinate space did you compute the lighting? 
+<br>
+<br>
+  The lighting is calculated in eye space.
+    </div>
+  :</body>
+</html>

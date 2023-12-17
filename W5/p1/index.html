@@ -1,9 +1,17 @@
 <!DOCTYPE html>
-<html><body>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/styles.css"> <!-- Replace with the path to your CSS file -->
+</head>
 
-  <script type="text/javascript" src="common/webgl-utils.js"></script>
-  <script type="text/javascript" src="common/utils.js"></script>
-  <script type="text/javascript" src="common/initShaders.js"></script>
+
+  <body>
+
+  <script type="text/javascript" src="/webgl-utils.js"></script>
+  <script type="text/javascript" src="/utils.js"></script>
+  <script type="text/javascript" src="/initShaders.js"></script>
 
  <script id="vertex-shader" type="x-shader/x-vertex">
   attribute vec4 a_Position;
@@ -27,16 +35,13 @@
   }
 </script>
 
-<script type="text/javascript" src="common/MV.js"></script>
-<script type="text/javascript" src="w5p1.js"></script>
+<script type="text/javascript" src="/MV.js"></script>
+<script type="text/javascript" src="/W5/p1/w5p1.js"></script>
 
 <p>
 <canvas id="canvas" width="512" height="512"></canvas>
 </p>
 
-<input type="button" id="incrementsub" value="Increment Subdiv" ></input>
-<input type="button" id="decreasesub" value="Decrease Subdiv" ></input>
-<input type="button" id="animate" value="Toggle animation" ></input>
 
   </body>
 </html>
