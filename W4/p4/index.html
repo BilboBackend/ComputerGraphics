@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/styles.css"> <!-- Replace with the path to your CSS file -->
+</head>
+
+  <body>
+
+  <script type="text/javascript" src="/webgl-utils.js"></script>
+  <script type="text/javascript" src="/initShaders.js"></script>
+
+ <script id="vertex-shader" type="x-shader/x-vertex">
+  attribute vec4 a_Position;
+  attribute vec4 a_Normal;
+  attribute vec4 a_Color;
+
+  uniform mat4 projection;
+  uniform mat4 view;
+  uniform vec4 lightPos;
+  uniform vec4 w_o;
+  
+  uniform vec4 ksColor;
+  uniform vec4 kdColor;
+  uniform vec4 kaColor;
+  
+  uniform float kd;
+  uniform float ks;
+  uniform float ka;
+  uniform float Li;
+  uniform float shininess;
+
+  varying vec4 v_Color;
+  void main() {
+    gl_Position = projection*view*a_Position;
+    vec4 pos = a_Position;
+    
+    vec3 N = normalize(a_Normal).xyz;
+    vec3 L = normalize(lightPos.xyz - (view*pos).xyz);
+    vec3 E = -normalize((view*pos).xyz);
+    vec3 H = normalize(L+E);
+    
+    vec4 Lrd = max(dot(N,E), 0.0)*(0.5*a_Normal+vec4(0.5,0.5,0.5,1.0));
+    vec4 Lra = ka*Li*kaColor;
+    vec4 Lrs = max(ks*Li*pow(max(dot(a_Normal.xyz,H),0.0),shininess)*ksColor,0.0);
+    v_Color = Lra + Lrd +Lrs;
+    v_Color.a = 1.0;
+  }
+ </script>
+
+ <script id="fragment-shader" type="x-shader/x-fragment">
+  precision mediump float;
+  varying vec4 v_Color;
+  void main() {
+    gl_FragColor = v_Color;
+  }
+</script>
+
+<script type="text/javascript" src="/MV.js"></script>
+<script type="text/javascript" src="/W4/p4/w4p4.js"></script>
+
+<p>
+<canvas id="canvas" width="512" height="512"></canvas>
+</p>
+
+<input type="button" id="incrementsub" value="Increment Subdiv" ></input>
+<input type="button" id="decreasesub" value="Decrease Subdiv" ></input>
+<input type="button" id="animate" value="Toggle animation" ></input>
+
+<div class="slidecontainer">
+<label for="slider">Ka:</label>
+  <input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" id="ka">
+</div>
+
+<div class="slidecontainer">
+  <label for="slider">Kd:</label>
+  <input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" id="kd">
+</div>
+
+<div class="slidecontainer">
+  <label for="slider">Ks:</label>
+  <input type="range" min="0" max="1" value="0.5" step="0.01" class="slider" id="ks">
+</div>
+
+<div class="slidecontainer">
+  <label for="slider">Shininess:</label>
+  <input type="range" min="0.0" max="20" value="5" step="0.1" class="slider" id="shininess">
+</div>
+
+<div class="slidecontainer">
+  <label for="slider">Intensity:</label>
+  <input type="range" min="0.0" max="1.0" value="0.5" step="0.01" class="slider" id="lightintensity">
+</div>
+
+</body>
+</html>

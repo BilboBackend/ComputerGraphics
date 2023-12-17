@@ -44,7 +44,7 @@ window.onload = function init() {
   checker = checkerboardTex()
 
   // Setting up texture coordinates 
-  texCoords = [vec2(-1.5,0.0), vec2(2.5,0.0), vec2(2.5,10.0), vec2(-1.5,10.0)]
+  texCoords = [vec2(-1.5,0.0), vec2(2.5,0.0), vec2(2.5,10.0), vec2(-1.5,0.0), vec2(-1.5,10.0), vec2(2.5,10.0)]
 
 
   wrap_s = gl.REPEAT
@@ -110,15 +110,13 @@ function checkerboardTex() {
 
 function drawrectangle(origin,width,depth) {
    
-   
   vertices.push(vec4(origin[0], origin[1],origin[2],1));
   vertices.push(vec4(origin[0]+width, origin[1],origin[2],1));
   vertices.push(vec4(origin[0]+width, origin[1],origin[2]+depth,1));
 
-  vertices.push(vec4(origin[0]+width, origin[1],origin[2]+depth,1));
   vertices.push(vec4(origin[0], origin[1],origin[2],1));
-
   vertices.push(vec4(origin[0], origin[1],origin[2]+depth,1));
+  vertices.push(vec4(origin[0]+width, origin[1],origin[2]+depth,1));
 }
 
 

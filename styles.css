@@ -1,0 +1,162 @@
+/* Reset some default styles for better consistency */
+body, html {
+  margin: 0;
+  padding: 5;
+font-family: 'Tahoma', sans-serif;
+}
+
+canvas {
+ padding: 5px 10px;
+
+}
+button {
+        padding: 5px 10px;
+        background-color: #cc66cc;
+        color: #fff;
+        border: none;
+        margin: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      #frame {
+        width: 100vw;
+        height: 100vh;
+        border: none;
+        padding: auto;
+         margin-bottom: 20px;
+
+      }
+/* Style for the button container */
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 5vh; /* Updated height to 3vh */
+ margin-bottom: 20px;
+
+}
+
+/* Style for the button */
+.button-container input[type="button"] {
+  padding: 20px 40px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 0 auto;
+  height: 5vh; /* Updated height to 3vh */
+  margin-bottom: 20px;
+   background-color: #4CAF50; /* Green button color */
+  color: #fff; /* White text color */
+  border: 2px solid #45a049; /* Darker green border */
+
+
+}
+
+/* Hover effect for the button */
+.button-container input[type="button"]:hover {
+ background-color: #4CAF50; /* Green button color */
+  color: #fff; /* White text color */
+  border: 2px solid #45a049; /* Darker green border */}
+}
+/* Style for the filled appearance */
+.button-container input[type="button"].filled {
+  color: #fff; /* White text color */
+ background-color: #4CAF50; /* Green button color */
+  color: #fff; /* White text color */
+  border: 2px solid #45a049; /* Darker green border */
+
+}
+
+/* Hover effect for the filled appearance */
+.button-container input[type="button"].filled:hover {
+ background-color: #4CAF50; /* Green button color */
+  color: #fff; /* White text color */
+  border: 2px solid #45a049; /* Darker green border */
+
+}
+
+/* Style for h1 elements */
+h1 {
+  text-align: center;
+  margin: 40px 0;
+  color: #4CAF50; /* White text color */
+  text-decoration: none;
+  transition: border-bottom 0.3s ease;
+  border-radius: 5px;
+  padding: 10px 20px;
+  margin: 0 auto;
+  align-items: center;
+}
+
+/* Style for anchor (a) elements */
+a {
+  text-decoration: none;
+  transition: border-bottom 0.3s ease;
+  border-radius: 5px;
+  padding: 10px 20px;
+
+
+ background-color: #4CAF50; /* Green button color */
+  color: #fff; /* White text color */
+  border: 2px solid #45a049; /* Darker green border */
+
+}
+
+/* Hover effect for anchor (a) elements */
+a:hover {
+  border-bottom: 1px solid #1565C0; /* Darker blue underline on hover */
+}
+
+
+input[type="button"] {
+  margin: 10px;
+  padding: 8px 15px;
+  font-size: 14px;
+  background-color: #4CAF50; /* Green button color */
+  color: #fff; /* White text color */
+  border: 2px solid #45a049; /* Darker green border */
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-bottom: 20px;
+
+}
+
+/* Hover effect for the additional button */
+input[type="button"]:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
+
+.slidecontainer {
+  margin: 5px;
+  padding: 8px 15px;
+  font-size: 14px;
+  color: #000; /* White text color */
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-bottom: 10px;
+ }
+
+
+.box-center {
+      width: 500px; /* Set the width of the box */
+      padding: 20px; /* Add padding inside the box */
+      border: 2px solid #333; /* Add a border around the box */
+      background-color: #f8f8f8; /* Set the background color of the box */
+      margin: 20px; /* Add margin to create space around the box */
+      text-align: center; /* Center the text inside the box */
+      align-items: center;
+
+    }
+
+.box {
+      width: 500px; /* Set the width of the box */
+      padding: 20px; /* Add padding inside the box */
+      border: 2px solid #333; /* Add a border around the box */
+      background-color: #f8f8f8; /* Set the background color of the box */
+      margin: 20px; /* Add margin to create space around the box */
+      text-align: center; /* Center the text inside the box */
+    }

@@ -26,7 +26,7 @@ window.onload = function init() {
 }
  
 const main = async () => {
-  let response = await fetch("./TestGeo-RubberToy.obj");
+  let response = await fetch("../Fox.obj");
   let responsetext = await response.text();
   let object = await readObj(responsetext);
 

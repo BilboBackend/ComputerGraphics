@@ -1,0 +1,266 @@
+
+window.onload = function init() {
+  var canvas = document.getElementById("canvas");
+  
+  var gl = WebGLUtils.setupWebGL(canvas, {});
+  gl.clearColor(0.3921, 0.5843, 0.9294, 1.0);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  var ext = gl.getExtension('OES_element_index_uint');
+  if (!ext) {
+    console.log("Warning: Unable to use an extension!")
+  }
+  var program = initShaders(gl, "vertex-shader", "fragment-shader");
+  gl.useProgram(program);
+
+  // only show foremost parts of figure
+  gl.enable(gl.DEPTH_TEST);
+
+  // backface culling:
+  gl.enable(gl.CULL_FACE);
+   var projection = gl.getUniformLocation(program,"projection");
+  var view = gl.getUniformLocation(program,"view");
+
+  var lightPos = gl.getUniformLocation(program,"lightPos");
+  var kd = gl.getUniformLocation(program,"kd");
+  var Li = gl.getUniformLocation(program,"Li");
+
+
+  var toRadians = Math.PI/180;
+  var cam_radius = 5;
+  var angle = 0;
+  var animation_active = 0;
+  var eye = vec3(cam_radius*Math.sin(toRadians*angle), 0, cam_radius*Math.cos(toRadians * angle));
+
+  var P = perspective(45,1,1,10);
+  var V = lookAt(eye,vec3(0,0,0),vec3(0.0,1.0,0.0));
+
+  var lPos = vec4(0.,0.,-1.,0.0);
+  var material_reflection = vec4(0.5,0.2,1.0,1.0);
+  var incident_light = vec4(0,0,-1.,0.0);
+
+  gl.uniformMatrix4fv(projection,false,flatten(P));
+  gl.uniformMatrix4fv(view,false,flatten(V));
+  
+  gl.uniform4fv(lightPos,flatten(lPos));
+  gl.uniform4fv(kd,flatten(material_reflection));
+  gl.uniform4fv(Li,flatten(incident_light));
+
+  var vBuffer = gl.createBuffer();
+
+
+  let current_n = 4;
+  
+  initSphere(gl,program,current_n);
+  function animate() { 
+    eye = vec3(cam_radius*Math.sin(toRadians*angle), 0, cam_radius*Math.cos(toRadians * angle));
+    V = lookAt(eye,vec3(0,0,0),vec3(0.0,1.0,0.0));
+    gl.uniformMatrix4fv(view,false,flatten(V));
+
+    initSphere(gl,program,current_n);
+    angle += 1;
+    if (animation_active == 1) {
+      requestAnimationFrame(animate); 
+    }
+  };
+  animate();
+  
+    
+  const animation = document.getElementById("animate");
+  animation.addEventListener("click", function()
+    {animation_active = (animation_active + 1) % 2;
+      animate();
+      console.log(animation_active)
+    initSphere(gl,program,current_n);
+    }
+  );
+
+  const increment = document.getElementById("incrementsub");
+  increment.addEventListener("click", function()
+    {current_n += 1;
+      initSphere(gl,program,current_n);
+    }
+  );
+
+  const decrease = document.getElementById("decreasesub");
+  decrease.addEventListener("click", function()
+    {current_n -= 1;
+      initSphere(gl,program,current_n);
+    }
+  );
+
+
+ 
+
+}
+
+function initSphere(gl,program, numSubdivs) {
+  pointsArray = [];
+  normalsArray = [];
+
+  va = vec4(0.0, 0.0, 1.0,1.0);
+  vb = vec4(0.0, 0.942809, -0.333333,1.0);
+  vc = vec4(-0.816497, -0.471405, -0.333333,1.0);
+  vd = vec4(0.816497, -0.471405, -0.333333,1.0);
+
+  tetrahedron(pointsArray,normalsArray, va, vb, vc, vd, numSubdivs);
+
+  gl.deleteBuffer(gl.vBuffer);
+  gl.vBuffer = gl.createBuffer();
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.vBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, flatten(pointsArray), gl.STATIC_DRAW);
+
+  var vPosition = gl.getAttribLocation(program, "a_Position");
+    gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(vPosition);
+
+  var nBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER,nBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, flatten(normalsArray), gl.STATIC_DRAW);
+
+  var vNormal = gl.getAttribLocation(program, "a_Normal");
+    gl.vertexAttribPointer(vNormal,4,gl.FLOAT,false,0,0);
+    gl.enableVertexAttribArray(vNormal);
+
+
+  var colors = [];
+  for (i=0; i<pointsArray.length;i++) {
+    colors.push(add(mult(pointsArray[i], vec4(0.5,0.5,0.5,1)), vec4(0.5,0.5,0.5,0)));
+  }
+
+  var cBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW);
+
+  // var vColor = gl.getAttribLocation(program, "a_Color");
+  //   gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 0, 0);
+  //   gl.enableVertexAttribArray(vColor);
+  //
+ 
+  gl.drawArrays(gl.TRIANGLES,0,pointsArray.length);
+}
+function tetrahedron(pointsArray,normalsArray, va,vb,vc,vd,n) {
+
+  divide_triangle(pointsArray,normalsArray,va,vb,vc,n);
+  divide_triangle(pointsArray,normalsArray,vd,vc,vb,n);
+  divide_triangle(pointsArray,normalsArray,va,vd,vb,n);
+  divide_triangle(pointsArray,normalsArray,va,vc,vd,n);
+}
+
+function divide_triangle(data,normalsArray,va,vb,vc,n) {
+  var v1,v2,v3;
+
+  if (n>0){
+
+    v1 = normalize(add(add(va,vb),vec4(0,0,0,-1)),true);
+    v2 = normalize(add(add(va,vc),vec4(0,0,0,-1)),true);
+    v3 = normalize(add(add(vb,vc),vec4(0,0,0,-1)),true);
+    
+    divide_triangle(data,normalsArray,va,v2,v1,n-1);
+    divide_triangle(data,normalsArray,vc,v3,v2,n-1);
+    divide_triangle(data,normalsArray,vb,v1,v3,n-1);
+    divide_triangle(data,normalsArray,v1,v2,v3,n-1);
+  } else {
+    triangle(data,normalsArray,va,vb,vc);
+  }
+
+}
+
+function triangle(data,normalsArray,a,b,c) {
+  data.push(normalize(a,true));
+  data.push(normalize(b,true));
+  data.push(normalize(c,true));
+
+  normalsArray.push(mult(normalize(a,true),vec4(1,1,1,0)));
+  normalsArray.push(mult(normalize(b,true),vec4(1,1,1,0)));
+  normalsArray.push(mult(normalize(c,true),vec4(1,1,1,0)));
+
+}
+
+
+function render(gl,vertices,indices,program) {
+ 
+   var iBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(indices), gl.STATIC_DRAW);
+ 
+  var vBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW);
+  
+  //console.log(gl.getAttribLocation(gl.program,"a_Position"));
+  var vPosition = gl.getAttribLocation(program, "a_Position");
+    gl.vertexAttribPointer(vPosition, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(vPosition);
+
+  
+  gl.drawElements(gl.TRIANGLES,indices.length,gl.UNSIGNED_INT,0);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// origin should be front bottom left corner
+function drawCube(origin,width,height,depth,type) {
+  cubevertices = [];
+
+  // making corner points
+  
+  //bottom back left
+  cubevertices.push(vec3(origin[0], origin[1],origin[2]+depth));
+  //top back  left
+  cubevertices.push(vec3(origin[0], origin[1]+height,origin[2]+depth));
+  //top back right
+  cubevertices.push(vec3(origin[0]+width, origin[1]+height,origin[2]+depth,1));
+  //bottom back right
+  cubevertices.push(vec3(origin[0]+width, origin[1],origin[2]+depth));
+  
+  //bottom front left
+  cubevertices.push(origin)
+  //top front left
+  cubevertices.push(vec3(origin[0], origin[1]+height,origin[2]));
+  //top front right
+  cubevertices.push(vec3(origin[0]+width, origin[1]+height,origin[2]));
+  //bottom front right
+  cubevertices.push(vec3(origin[0]+width, origin[1],origin[2]));
+  
+ 
+  var indices = [];
+
+  if (type == "indices") {
+    var indices = new Uint32Array([
+      1, 0, 3, 3, 2, 1, // front
+      2, 3, 7, 7, 6, 2, // right
+      3, 0, 4, 4, 7, 3, // down
+      6, 5, 1, 1, 2, 6, // up
+      4, 5, 6, 6, 7, 4, // back
+      5, 4, 0, 0, 1, 5 // left
+      ]);
+  } else if (type == "wires") {
+      var indices = new Uint32Array([
+        0, 1, 1, 2, 2, 3, 3, 0, // front
+        2, 3, 3, 7, 7, 6, 6, 2, // right
+        0, 3, 3, 7, 7, 4, 4, 0, // down
+        1, 2, 2, 6, 6, 5, 5, 1, // up
+        4, 5, 5, 6, 6, 7, 7, 4, // back
+        0, 1, 1, 5, 5, 4, 4, 0 // left
+    ]);
+  } else {
+    console.log("Wrong type for cube. Use either indices or wires")
+  }
+
+  return [cubevertices, indices]
+}
+
+
